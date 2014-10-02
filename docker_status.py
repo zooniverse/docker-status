@@ -6,6 +6,7 @@ import datetime
 import os
 import re
 import urllib2
+import sys
 
 OK_STATUSES = [ 200, 301, 302 ]
 HTTP_TIMEOUT = os.environ.get('HTTP_TIMEOUT', 30)
@@ -41,6 +42,7 @@ def checker(host, status):
             status.value = -1
 
         print datetime.datetime.now(), host, status.value
+        sys.stdout.flush()
         sleep(TEST_INTERVAL)
 
 if __name__ == "__main__":
