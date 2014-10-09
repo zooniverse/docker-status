@@ -57,7 +57,7 @@ def checker(host, status):
         sleep(TEST_INTERVAL)
 
 if __name__ == "__main__":
-    hosts = [ var.split('_')[0] for var in os.environ
+    hosts = [ var.split('_PORT_80_TCP')[0] for var in os.environ
               if re.match('[A-Z0-9_]+_PORT_80_TCP$', var) ]
 
     for host in hosts:
