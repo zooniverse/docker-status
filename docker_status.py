@@ -15,6 +15,7 @@ TEST_INTERVAL = os.environ.get('TEST_INTERVAL', 30)
 DEBUG = os.environ.get('DEBUG', False) == "true"
 LISTEN_HOST = os.environ.get('LISTEN_HOST', '0.0.0.0')
 LISTEN_PORT = os.environ.get('LISTEN_PORT', '80')
+DELAY_START = os.environ.get('DELAY_START', False) == "true"
 
 app = Flask(__name__)
 
@@ -65,5 +66,8 @@ if __name__ == "__main__":
         process = Process(target=checker, args=(host, status))
         process.start()
         checks[host] = (status, process)
+
+        if DELAY_START:
+            sleep(TEST_INTERVAL)
 
     app.run(host=LISTEN_HOST, port=LISTEN_PORT, debug=DEBUG)

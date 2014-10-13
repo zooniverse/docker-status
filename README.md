@@ -35,3 +35,5 @@ Valid options are:
 * *LISTEN_PORT* – Which port to listen on. Make sure to also expose the port
   if you change this. **Default: 80**
 * *DEBUG* – Run Flask in debug mode. **Default: false**
+* *DELAY_START* – Start one test process every TEST_INTERVAL, rather than all at
+  once.
