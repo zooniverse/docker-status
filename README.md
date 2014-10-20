@@ -36,4 +36,4 @@ Valid options are:
   if you change this. **Default: 80**
 * *DEBUG* – Run Flask in debug mode. **Default: false**
 * *DELAY_START* – Start one test process every TEST_INTERVAL, rather than all at
-  once.
+  once. **Default : false**
