@@ -31,17 +31,19 @@ url_opener = urllib2.build_opener(NoRedirectHTTPErrorProcessor)
 
 @app.route("/")
 def status():
-    if len([ host for (host, check) in checks.items()
-             if check[0].value not in OK_STATUSES ]) == 0:
-        status = 200
-        message = "OK"
-    else:
-        status = 500
-        message = "Fail"
+    for (host, (status, timestamp, process)) in checks.items():
+        if (status.value not in OK_STATUSES or
+            timestamp.value < int(
+                (datetime.datetime.now() - datetime.timedelta(
+                    seconds=TEST_INTERVAL*2
+                )).strftime("%s")
+            )
+           ):
+            return "Fail", 500
 
-    return message, status
+    return "OK", 200
 
-def checker(host, status):
+def checker(host, status, timestamp):
     get_path = os.environ.get("%s_GET_PATH" % host, "/")
 
     while True:
@@ -53,6 +55,7 @@ def checker(host, status):
             status.value = getattr(e, 'code', -1)
             traceback.print_exc()
 
+        timestamp.value = int(datetime.datetime.now().strftime('%s'))
         print datetime.datetime.now(), host, status.value
         sys.stdout.flush()
         sleep(TEST_INTERVAL)
@@ -63,9 +66,10 @@ if __name__ == "__main__":
 
     for host in hosts:
         status = Value('i', -1)
-        process = Process(target=checker, args=(host, status))
+        timestamp = Value('i', -1)
+        process = Process(target=checker, args=(host, status, timestamp))
         process.start()
-        checks[host] = (status, process)
+        checks[host] = (status, timestamp, process)
 
         if DELAY_START:
             sleep(TEST_INTERVAL)
