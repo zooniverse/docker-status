@@ -25,6 +25,9 @@ Valid options are:
 
 * *[NAME]_GET_PATH* – What path to get when testing the container *NAME*.
   **Default: /**
+* *[NAME]_CONNECT_IP* - Whether or not to use the IP address from the Docker
+  environment variables rather than the host name when connecting. **Default:
+false**
 * *HTTP_TIMEOUT* – How many seconds to wait for each container to respond before
   assuming it has failed. **Default: 30**
 * *TEST_INTERVAL* – How often to test linked containers (in seconds). **Default:

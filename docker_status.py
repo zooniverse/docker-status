@@ -45,10 +45,16 @@ def status():
 
 def checker(host, status, timestamp):
     get_path = os.environ.get("%s_GET_PATH" % host, "/")
+    use_host_ip = os.environ.get("%s_CONNECT_IP" % host, False) == 'true'
+
+    if use_host_ip:
+        check_host = os.environ.get("%s_PORT_80_TCP_ADDR" % host)
+    else:
+        check_host = host
 
     while True:
         try:
-            result = url_opener.open("http://%s%s" % (host, get_path),
+            result = url_opener.open("http://%s%s" % (check_host, get_path),
                                      timeout=HTTP_TIMEOUT)
             status.value = result.getcode()
         except Exception as e:
