@@ -10,3 +10,5 @@ RUN apt-get update && \
 ADD docker_status.py /
 
 ENTRYPOINT [ "python", "/docker_status.py" ]
+
+EXPOSE 80
