@@ -25,6 +25,8 @@ Valid options are:
 
 * *[NAME]_GET_PATH* – What path to get when testing the container *NAME*.
   **Default: /**
+  If your app runs on a port other than 80, you can reference the port in the path, like so: [NAME]_GET_PATH: :8080/
+
 * *[NAME]_CONNECT_IP* - Whether or not to use the IP address from the Docker
   environment variables rather than the host name when connecting. **Default:
 false**
