@@ -70,6 +70,15 @@ if __name__ == "__main__":
     hosts = [ var.split('_PORT_80_TCP')[0] for var in os.environ
               if re.match('[A-Z0-9_]+_PORT_80_TCP$', var) ]
 
+    # De-dupe hosts. We take the one with the shortest name for each IP address
+    host_ips = {}
+    for host in hosts:
+        host_ips.setdefault(os.environ.get("%s_PORT_80_TCP_ADDR" % host),
+                            []).append(host)
+    hosts = []
+    for ip, ip_hosts in host_ips.items():
+        hosts.append(sorted(ip_hosts, key=len)[0])
+
     for host in hosts:
         status = Value('i', -1)
         timestamp = Value('i', -1)
