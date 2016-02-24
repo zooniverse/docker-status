@@ -1,11 +1,8 @@
-from ubuntu:14.04
-
-ADD requirements.txt /
+FROM ubuntu:14.04
 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y upgrade && \
-    apt-get install -y python python-dev python-setuptools python-pip && \
-    pip install -r requirements.txt
+    apt-get install -y python python-flask && \
+    rm -rf /var/lib/apt/lists/*
 
 ADD docker_status.py /
 
