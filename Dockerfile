@@ -1,11 +1,11 @@
-FROM ubuntu:14.04
+FROM python:2.7-alpine
 
-RUN apt-get update && \
-    apt-get install -y python python-flask && \
-    rm -rf /var/lib/apt/lists/*
+COPY requirements.txt /requirements.txt
+
+RUN pip install -r /requirements.txt
 
 ADD docker_status.py /
 
-ENTRYPOINT [ "python", "/docker_status.py" ]
+CMD [ "python", "/docker_status.py" ]
 
 EXPOSE 80
