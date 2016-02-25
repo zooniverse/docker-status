@@ -50,7 +50,7 @@ def checker(host, status, timestamp):
     if use_host_ip:
         check_host = os.environ.get("%s_PORT_80_TCP_ADDR" % host)
     else:
-        check_host = host
+        check_host = host.lower()
 
     while True:
         try:
