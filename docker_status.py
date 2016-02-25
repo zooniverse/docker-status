@@ -59,6 +59,7 @@ def checker(host, status, timestamp):
             status.value = result.getcode()
         except Exception as e:
             status.value = getattr(e, 'code', -1)
+            print "Failed check. Host: %s, path: %s" % (check_host, get_path)
             traceback.print_exc()
 
         timestamp.value = int(datetime.datetime.now().strftime('%s'))
