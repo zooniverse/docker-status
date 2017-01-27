@@ -3,6 +3,8 @@ from multiprocessing import Process, Value
 from time import sleep
 
 import datetime
+import graypy
+import logging
 import os
 import re
 import urllib2
@@ -16,6 +18,9 @@ DEBUG = os.environ.get('DEBUG', False) == "true"
 LISTEN_HOST = os.environ.get('LISTEN_HOST', '0.0.0.0')
 LISTEN_PORT = os.environ.get('LISTEN_PORT', '80')
 DELAY_START = os.environ.get('DELAY_START', False) == "true"
+GRAYLOG_HOST = os.environ.get('GRAYLOG_HOST', None)
+GRAYLOG_PORT = int(os.environ.get('GRAYLOG_PORT', 12201))
+GRAYLOG_LOCALNAME = os.environ.get('GRAYLOG_LOCALNAME', 'docker-status')
 
 app = Flask(__name__)
 
@@ -28,6 +33,20 @@ class NoRedirectHTTPErrorProcessor(urllib2.HTTPErrorProcessor):
     https_response = http_response
 
 url_opener = urllib2.build_opener(NoRedirectHTTPErrorProcessor)
+
+if GRAYLOG_HOST is not None:
+    logger = logging.getLogger('status_logger')
+    if DEBUG:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
+
+    graylog_handler = graypy.GELFHandler(
+        GRAYLOG_HOST,
+        GRAYLOG_PORT,
+        localname=GRAYLOG_LOCALNAME
+    )
+    logger.addHandler(graylog_handler)
 
 @app.route("/")
 def status():
@@ -52,6 +71,14 @@ def checker(host, status, timestamp):
     else:
         check_host = host.lower()
 
+    log_adapter = logging.LoggerAdapter(
+        logging.getLogger('status_logger'),
+        {
+            'status_host': host,
+            'status_check_host': check_host
+        }
+    )
+
     while True:
         try:
             result = url_opener.open("http://%s%s" % (check_host, get_path),
@@ -59,11 +86,21 @@ def checker(host, status, timestamp):
             status.value = result.getcode()
         except Exception as e:
             status.value = getattr(e, 'code', -1)
-            print "Failed check. Host: %s, path: %s" % (check_host, get_path)
+            log_str = "Failed check. Host: %s, path: %s" % (
+                check_host,
+                get_path
+            )
+            log_adapter.error(log_str, exc_info=1)
+            print log_str
             traceback.print_exc()
 
         timestamp.value = int(datetime.datetime.now().strftime('%s'))
-        print datetime.datetime.now(), host, status.value
+        log_str = "%s %s %s" % (datetime.datetime.now(), host, status.value)
+        if status.value in OK_STATUSES:
+            log_adapter.info(log_str)
+        else:
+            log_adapter.error(log_str)
+        print(log_str)
         sys.stdout.flush()
         sleep(TEST_INTERVAL)
 

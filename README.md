@@ -42,3 +42,7 @@ false**
 * *DEBUG* – Run Flask in debug mode. **Default: false**
 * *DELAY_START* – Start one test process every TEST_INTERVAL, rather than all at
   once. **Default : false**
+* *GRAYLOG_HOST* - Host to send GELF logs to. **Default: none**
+* *GRAYLOG_PORT* - Port to send GELF lgos to. **Default: 12201**
+* *GRAYLOG_LOCALNAME* - Localname for log entries (shows up as "source" in
+  Graylog"). **Default: docker-status**
