@@ -16,7 +16,7 @@ HTTP_TIMEOUT = os.environ.get('HTTP_TIMEOUT', 30)
 TEST_INTERVAL = os.environ.get('TEST_INTERVAL', 30)
 DEBUG = os.environ.get('DEBUG', False) == "true"
 LISTEN_HOST = os.environ.get('LISTEN_HOST', '0.0.0.0')
-LISTEN_PORT = os.environ.get('LISTEN_PORT', '80')
+LISTEN_PORT = os.environ.get('LISTEN_PORT', 80)
 DELAY_START = os.environ.get('DELAY_START', False) == "true"
 GRAYLOG_HOST = os.environ.get('GRAYLOG_HOST', None)
 GRAYLOG_PORT = int(os.environ.get('GRAYLOG_PORT', 12201))
